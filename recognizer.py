@@ -76,7 +76,7 @@ def resample_points(points):
         i += 1
     if len(resampled_points) == NUM_POINTS - 1: # rounding-error fix
         resampled_points.append(Point(points[len(points)-1].x, points[len(points)-1].y))
-    print(len(resampled_points))
+    #print(len(resampled_points))
     return resampled_points   
 
 # returns the path length of gesture
