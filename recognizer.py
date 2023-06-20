@@ -37,7 +37,6 @@ class Unistroke():
         self.points = rotate_by(self.points, self.radians)
         self.points = scale_to(self.points) #, SQUARE_SIZE
         self.points = translate_to(self.points)
-        #self.vector = vectorize(self.points) # protractor
 
 # represents the recognition result
 class Result():
@@ -77,7 +76,6 @@ def resample_points(points):
         i += 1
     if len(resampled_points) == NUM_POINTS - 1: # rounding-error fix
         resampled_points.append(Point(points[len(points)-1].x, points[len(points)-1].y))
-    #print(len(resampled_points))
     return resampled_points   
 
 # returns the path length of gesture
@@ -132,11 +130,7 @@ def scale_to(points):
         scaled_points.append(Point(qx, qy))
     return scaled_points
  
-def get_bbox(points):
-    #minX = min(points, key=lambda p: p.x).x
-    #maxX = max(points, key=lambda p: p.x).x
-    #minY = min(points, key=lambda p: p.y).y
-    #maxY = max(points, key=lambda p: p.y).y
+def get_bbox(points): # bounding box
     minX, minY, maxX, maxY = 0, 0, 0, 0
     for i in range(len(points)):
         minX = min(minX, points[i].x)
@@ -158,7 +152,7 @@ def translate_to(points): # translates points centroid
 def deg2rad(angle):
     return (angle * math.pi / 180.0)
 
-def get_distance_at_best_angle(points, unistroke, a, b, treshold): #-anglerange +anglerange angleprecision
+def get_distance_at_best_angle(points, unistroke, a, b, treshold): 
         x1 = PHI * a + (1.0 - PHI) * b
         f1 = get_distance_at_angle(points, unistroke, x1)
         x2 = (1.0 - PHI) * a + PHI * b
