@@ -1,5 +1,4 @@
 # application for task 3
-# gesture input program for first task
 
 from recognizer import DollarRecognizer, Point
 from pynput.keyboard import Key, Controller
@@ -20,7 +19,7 @@ class ControlManager:
 
     # gets the predicted label from recognizer
     # if correct label was predicted -> media key press
-    def _control_media(self, label):
+    def _media_controlled(self, label):
         if label == "circle": # pause / play
             self.keyboard.press(Key.media_play_pause)
             self.keyboard.release(Key.media_play_pause)
@@ -36,10 +35,13 @@ class ControlManager:
         elif label == "right_sq_bracket": # next track
             self.keyboard.press(Key.media_next)
             self.keyboard.release(Key.media_next)
+        else:
+            return False
+        return True
 
 # holds the UI elements
 class UIManager:
-    batch = pyglet.graphics.Batch()
+
     def __init__(self) -> None:
         self.shapes = []
         self._create_shapes()
@@ -57,6 +59,12 @@ class UIManager:
                                         x = 50,
                                         y = 340,
                                         color=(186, 59, 70, 255))
+        self.recognition_text = pyglet.text.Label("",
+                                        font_name="Arial",
+                                        font_size=13,
+                                        x = 50,
+                                        y = 340,
+                                        color=(31, 32, 65, 255))
         self.input_too_short = False # if input points were too short (wrong predictions)
 
     # canvas borders
@@ -82,6 +90,7 @@ class InputManager:
 
     def __init__(self) -> None:
         self.points = [] # mouse detected points
+        self.input_recognized = False
 
     def get_mirrored_y(self, y):
         return WINDOW_HEIGHT-y # pyglet to recognizer y
@@ -101,7 +110,7 @@ input_manager = InputManager()
 def on_mouse_press(x,y, button, modifiers):
     ui_manager.input_too_short = False
     if input_manager.mouse_is_inbounds(x,y):
-        input_manager.points.append(Point(x,input_manager.get_mirrored_y(y)))
+        input_manager.points.append(Point(x,input_manager.get_mirrored_y(y))) # y coordinate mirror for correct result
 
 @window.event
 def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
@@ -111,11 +120,15 @@ def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
 @window.event
 def on_mouse_release(x,y,button,modifiers):
     if len(input_manager.points) > MIN_RECORDED_NUMS:
-        result = dollar_recognizer.recognize(input_manager.points)
-        control_manager._control_media(result.name)
+        result = dollar_recognizer.recognize(input_manager.points) # get the result
+        input_manager.input_recognized = control_manager._media_controlled(result.name) # control media with result
+        if not input_manager.input_recognized:
+            ui_manager.recognition_text.text = "input not recognized"
+        else:
+            ui_manager.recognition_text.text = "input recognized"
     else:
         ui_manager.input_too_short = True
-    input_manager.points.clear()
+    input_manager.points.clear() # clear canvas for new input
 
 @window.event
 def on_draw():
@@ -126,6 +139,10 @@ def on_draw():
         circle.draw()
     if ui_manager.input_too_short:
         ui_manager._draw_short_input()
+    if not input_manager.input_recognized:
+            ui_manager.recognition_text.draw()
+    else:
+            ui_manager.recognition_text.draw()
 
 if __name__ == "__main__":
-    pyglet.app.run()
+    pyglet.app.run() 
