@@ -109,6 +109,7 @@ input_manager = InputManager()
 @window.event
 def on_mouse_press(x,y, button, modifiers):
     ui_manager.input_too_short = False
+    ui_manager.recognition_text.text = ""
     if input_manager.mouse_is_inbounds(x,y):
         input_manager.points.append(Point(x,input_manager.get_mirrored_y(y))) # y coordinate mirror for correct result
 
@@ -139,9 +140,9 @@ def on_draw():
         circle.draw()
     if ui_manager.input_too_short:
         ui_manager._draw_short_input()
-    if not input_manager.input_recognized:
+    if not input_manager.input_recognized and not ui_manager.input_too_short:
             ui_manager.recognition_text.draw()
-    else:
+    elif input_manager.input_recognized and not ui_manager.input_too_short:
             ui_manager.recognition_text.draw()
 
 if __name__ == "__main__":
