@@ -1,0 +1,6 @@
+evdev==1.6.1
+numpy==1.25.0
+pyglet==2.0.7
+pynput==1.7.6
+python-xlib==0.33
+six==1.16.0
