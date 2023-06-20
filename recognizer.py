@@ -4,6 +4,7 @@
 
 import math
 import numpy as np
+import sys
 from datetime import datetime
   
 """
@@ -259,5 +260,6 @@ class DollarRecognizer():
         self.unistrokes = self.unistrokes[:NUM_UNISTROKES]
         return NUM_UNISTROKES
 
-
-
+if __name__ == "__main__":
+    print("Import this module in your application with the $1 Gesture Recognizer. This file does not work on its own")
+    sys.exit(0)
